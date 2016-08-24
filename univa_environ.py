@@ -28,6 +28,4 @@ def add_environment_vars():
     os.environ['SGE_CLUSTER_NAME'] = SGE_CLUSTER_NAME
     os.environ['PATH'] = SGE_PATH + os.pathsep + os.environ['PATH']
 
-    os.environ()
-
     return True
