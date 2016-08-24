@@ -17,8 +17,6 @@ Note: In order for the machine submitting UNIVA commands, it needs to be either 
 
 def add_environment_vars():
     """ Adds environment variables for UGE. """
-    
-    os.environ()
 
     SGE_ROOT = '/path/to/uge-8.1.7p3'
     SGE_CELL = 'cell_name'
