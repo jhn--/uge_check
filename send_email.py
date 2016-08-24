@@ -15,7 +15,7 @@ msg['To'] = ", ".join(recipients)
 
 
 def ooc_email():
-    msg['Subject'] = "Nodes down {0}".format(datetimenow)
+    msg['Subject'] = "Nodes down at {0}".format(datetimenow)
 
     nooc = '/var/www/html/initializr/nodes_out_of_circulation.html'
 
