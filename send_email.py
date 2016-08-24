@@ -36,7 +36,7 @@ def ooc_email():
     smtpserver.quit()
 
 def main():
-    print()
+    print("Not supposed to run this script as is.")
 
 if __name__ == '__main__':
     main()
