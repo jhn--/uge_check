@@ -19,14 +19,8 @@ def ooc_email():
 
     nooc = '/var/www/html/initializr/nodes_out_of_circulation.html'
 
-    try:
-        nooc_fp =  open(nooc, 'r')
-    except Exception, e:
-        print(e)
-    else:
+    with open(nooc, 'r') as nooc_fp:
         html_source = "\n".join(line for line in nooc_fp.readlines())
-    finally:
-        nooc_fp.close()
 
     html_msg = MIMEText(html_source, 'html')
     msg.attach(html_msg)
