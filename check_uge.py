@@ -82,25 +82,34 @@ def seek_heavy_load(xmlfile):
     for node in hosts_lists.keys():
         # Omits out global.
         # Omits out Login nodes, admin nodes and head nodes.
-        if (node != 'global') and (node != 'admin.default.domain') and (node != 'headnode1.default.domain') and (node != 'headnode2.default.domain'):
+        
+        if node != ('global', 'admin.default.domain', 'headnode1.default.domain', 'headnode2.default.domain'):
 
-            # Get memory (RSS) usage percentage.
-            mem_used_percentage = (float(hosts_lists[node]['hostvalue']['mem_used'].rstrip("G"))/float(hosts_lists[node]['hostvalue']['mem_total'].rstrip("G")))*100
+            # Get mem_used and mem_total.
+            memory_used = float(hosts_lists[node]['hostvalue']['mem_used'].rstrip("G"))
+            memory_total = float(hosts_lists[node]['hostvalue']['mem_total'].rstrip("G"))
+
+            # Get np_load_avg(load average)
+            np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
+
+            # Calculate memory (RSS) usage percentage.
+            mem_used_percentage = (float(float_memory_used)/float(float_memory_total))*100
             
             # Verbose printing of memory (RSS) usage.
             # print("{0}, {1:2.2f}%").format(node, mem_used_percentage)
 
             # Converts string type of the 'np_load_avg' into float in order to perform numerical comparison.
+
             # If node has high load average AND high memory usage.
-            if (float(hosts_lists[node]['hostvalue']['np_load_avg']) >= 0.80) and (mem_used_percentage >= 80.0):
-                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
+            if (float(np_load_avg) >= 0.80) and (mem_used_percentage >= 80.0):
+                np_load_avg = "<font style=\"color:red;\">" + np_load_avg
                 hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
             # If node has high load average ONLY.
-            elif (float(hosts_lists[node]['hostvalue']['np_load_avg']) >= 0.80) and (mem_used_percentage < 80.0):
-                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
+            elif (float(np_load_avg) >= 0.80) and (mem_used_percentage < 80.0):
+                np_load_avg = "<font style=\"color:red;\">" + np_load_avg
                 problem_nodes[node] = hosts_lists[node]['hostvalue']
             # If node has high memory usage ONLY.
-            elif (float(hosts_lists[node]['hostvalue']['np_load_avg']) < 0.80) and (mem_used_percentage >= 80.0):
+            elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
                 hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
                 problem_nodes[node] = hosts_lists[node]['hostvalue']
 
@@ -117,16 +126,19 @@ def seek_ooc_nodes(xmlfile):
     # Passes XML file get_hosts_details_list() for parsing.
     hosts_lists = get_hosts_details_list(xmlfile)
 
+    # Get np_load_avg(load average)
+    np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
+
     # Dictionary of out of circulation nodes.
     ooc_nodes = {}
 
     for node in hosts_lists.keys():
         # Omits out global.
         # Omits out Login nodes, admin nodes and head nodes.
-        if (node != 'global') and (node != 'admin.default.domain') and (node != 'headnode1.default.domain') and (node != 'headnode2.default.domain'):
+        if node != ('global', 'admin.default.domain', 'headnode1.default.domain', 'headnode2.default.domain'):
 
             # If value of  hosts_lists[node]['hostvalue']['np_load_avg'] is a dash (-).
-            if (hosts_lists[node]['hostvalue']['np_load_avg'] == '-'):
+            if (np_load_avg == '-'):
                 ooc_nodes[node] = hosts_lists[node]['hostvalue']
 
     # Passes dictionary out to writeout to generate HTML file.
