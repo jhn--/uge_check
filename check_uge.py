@@ -93,7 +93,7 @@ def seek_heavy_load(xmlfile):
             np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
 
             # Calculate memory (RSS) usage percentage.
-            mem_used_percentage = (float(float_memory_used)/float(float_memory_total))*100
+            mem_used_percentage = (float(memory_used)/float(memory_total))*100
             
             # Verbose printing of memory (RSS) usage.
             # print("{0}, {1:2.2f}%").format(node, mem_used_percentage)
@@ -180,7 +180,7 @@ def main():
     # 2. Based on the arguments, the script knows the location of the XML to get data for processing.
 
     dictofugecommands = {
-    "qhost -q -xml": "/usr/local/bin/scripts/qhost-q.xml", 
+    "qhost -q -xml": "/usr/local/bin/scripts/qhost-q_xml.xml", 
     "qstat -u \'*\' -xml": "/usr/local/bin/scripts/qstat_all_users.xml"
     }
 
