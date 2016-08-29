@@ -25,6 +25,7 @@ def run_univa_commands(univa_command):
         return True
     else:
         LOG.info("run_univa_commands : add_environment_vars failed.")
+        return False
 
 def main():
     """ Main function, you're not supposed to call this function if you import this script from check_uge.py, call run_univa_commands() directly, the following lines of code serves as an example on what sort of datatype to pass into run_univa_commands(). """
