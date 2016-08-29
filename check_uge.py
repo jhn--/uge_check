@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Runs function based on argument provided, checks """
+""" Runs function based on argument provided, generates XML output and other functions queries XML file instead of qmaster directly. """
 
 from xml.etree import ElementTree
 from pprint import pprint
@@ -19,13 +19,13 @@ def get_host_attri(host):
     Returns example - 
     {'name': 'global'}
     {'name': 'admin.default.domain'}
-    {'name': 'headnode1.default.domain'}
-    {'name': 'headnode2.default.domain'}
-    {'name': 'node1.default.domain'}
+    {'name': 'aquilah1.default.domain'}
+    {'name': 'aquilah2.default.domain'}
+    {'name': 'n001.default.domain'}
     .
     .
     .
-    {'name': 'nodeN.default.domain'}
+    {'name': 'n127.default.domain'}
     """
 
     for h in host:
@@ -38,16 +38,18 @@ def get_hosts_details_list(xmlfile):
     Works for both Python 2.6 and Python 2.7.
     """
 
+    findall_hosts = []
+
     try:
         dom = ElementTree.parse(xmlfile)
     except Exception, e:
         print(e)
     else:
         # Find all hosts in dom.
-        hosts_lists = dom.findall('host')
+        findall_hosts = dom.findall('host')
 
     cluster = {}
-    for h in hosts_lists:
+    for h in findall_hosts:
         # Create a key in cluster dictionary, named by each unique host in the cluster.
         cluster[h.attrib['name']] = {}
         # Loop through the list of hostvalues under host entity
@@ -77,15 +79,15 @@ def seek_heavy_load(xmlfile):
 
     hosts_lists = get_hosts_details_list(xmlfile)
 
-    problem_nodes = {}
+    heavy_load = {}
 
     for node in hosts_lists.keys():
         # Omits out global.
         # Omits out Login nodes, admin nodes and head nodes.
-        
-        if node != ('global', 'admin.default.domain', 'headnode1.default.domain', 'headnode2.default.domain'):
 
-            # Get mem_used and mem_total.
+        if node not in ('global', 'admin.default.domain', 'aquilah1.default.domain', 'aquilah2.default.domain'):
+            
+            # Get mem_used and mem_total. Convert it to float.
             memory_used = float(hosts_lists[node]['hostvalue']['mem_used'].rstrip("G"))
             memory_total = float(hosts_lists[node]['hostvalue']['mem_total'].rstrip("G"))
 
@@ -98,8 +100,6 @@ def seek_heavy_load(xmlfile):
             # Verbose printing of memory (RSS) usage.
             # print("{0}, {1:2.2f}%").format(node, mem_used_percentage)
 
-            # Converts string type of the 'np_load_avg' into float in order to perform numerical comparison.
-
             # If node has high load average AND high memory usage.
             if (float(np_load_avg) >= 0.80) and (mem_used_percentage >= 80.0):
                 np_load_avg = "<font style=\"color:red;\">" + np_load_avg
@@ -107,14 +107,14 @@ def seek_heavy_load(xmlfile):
             # If node has high load average ONLY.
             elif (float(np_load_avg) >= 0.80) and (mem_used_percentage < 80.0):
                 np_load_avg = "<font style=\"color:red;\">" + np_load_avg
-                problem_nodes[node] = hosts_lists[node]['hostvalue']
+                heavy_load[node] = hosts_lists[node]['hostvalue']
             # If node has high memory usage ONLY.
             elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
                 hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
-                problem_nodes[node] = hosts_lists[node]['hostvalue']
+                heavy_load[node] = hosts_lists[node]['hostvalue']
 
     # Passes dictionary out to writeout.py to generate HTML file.
-    writeout.write_to_high_resource(problem_nodes)
+    writeout.write_to_high_resource(heavy_load)
     return True
 
 def seek_ooc_nodes(xmlfile):
@@ -126,16 +126,16 @@ def seek_ooc_nodes(xmlfile):
     # Passes XML file get_hosts_details_list() for parsing.
     hosts_lists = get_hosts_details_list(xmlfile)
 
-    # Get np_load_avg(load average)
-    np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
-
     # Dictionary of out of circulation nodes.
     ooc_nodes = {}
 
     for node in hosts_lists.keys():
         # Omits out global.
         # Omits out Login nodes, admin nodes and head nodes.
-        if node != ('global', 'admin.default.domain', 'headnode1.default.domain', 'headnode2.default.domain'):
+        if node not in ('global', 'admin.default.domain', 'aquilah1.default.domain', 'aquilah2.default.domain'):
+
+            # Get np_load_avg(load average)
+            np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
 
             # If value of  hosts_lists[node]['hostvalue']['np_load_avg'] is a dash (-).
             if (np_load_avg == '-'):
@@ -180,7 +180,7 @@ def main():
     # 2. Based on the arguments, the script knows the location of the XML to get data for processing.
 
     dictofugecommands = {
-    "qhost -q -xml": "/usr/local/bin/scripts/qhost-q_xml.xml", 
+    "qhost -q -xml": "/usr/local/bin/scripts/qhost-q_xml.xml",
     "qstat -u \'*\' -xml": "/usr/local/bin/scripts/qstat_all_users.xml"
     }
 
