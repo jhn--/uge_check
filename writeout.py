@@ -17,6 +17,8 @@ def write_to_html(write_code, input_data):
         writeout_html = '/var/www/html/initializr/nodes_with_high_resource_usage.html'
     elif write_code == 'ooc':
         writeout_html = '/var/www/html/initializr/nodes_out_of_circulation.html'
+    else:
+        pass
 
     # If there are any nodes under heavy load, the length of the dictionary will not be 0.
     if len(input_data) == 0:
@@ -90,8 +92,6 @@ def write_to_html(write_code, input_data):
     "<tr><td></td></tr>",
     "</table>"
     ]
-
-    # print('\n'.join(HTML_structure))
 
     with open(writeout_html, 'w') as writeout_fp:
         writeout_fp.write('\n'.join(HTML_structure))
