@@ -114,7 +114,7 @@ def seek_heavy_load(xmlfile):
                 heavy_load[node] = hosts_lists[node]['hostvalue']
 
     # Passes dictionary out to writeout.py to generate HTML file.
-    writeout.write_to_high_resource(heavy_load)
+    writeout.write_to_html('hl',heavy_load)
     return True
 
 def seek_ooc_nodes(xmlfile):
@@ -142,7 +142,7 @@ def seek_ooc_nodes(xmlfile):
                 ooc_nodes[node] = hosts_lists[node]['hostvalue']
 
     # Passes dictionary out to writeout to generate HTML file.
-    writeout.write_to_ooc(ooc_nodes)
+    writeout.write_to_html('ooc',ooc_nodes)
     # If there are any nodes which are out of circulation, call send_email.py to send e-mail notification.
     if len(ooc_nodes) > 0:
         send_email.ooc_email()
