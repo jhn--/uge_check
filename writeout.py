@@ -22,11 +22,20 @@ def write_to_html(write_code, input_data):
 
     # If there are any nodes under heavy load, the length of the dictionary will not be 0.
     if len(input_data) == 0:
-        HTML_content = [
-        "<tr><td>", 
-        "<h2>No nodes under heavy load.</h2>",
-        "</td></tr>" 
-        ]
+        if write_code == 'hl':
+            HTML_content = [
+            "<tr><td>", 
+            "<h2>No nodes under heavy load.</h2>",
+            "</td></tr>" 
+            ]
+        elif write_code == 'ooc':
+            HTML_content = [
+            "<tr><td>", 
+            "<h2>No nodes are down/out of circulation.</h2>",
+            "</td></tr>" 
+            ]
+        else:
+            pass
     else:
         if write_code == 'hl':
             HTML_content.append("<tr><th>Nodes under high resource usage:</th></tr>")
