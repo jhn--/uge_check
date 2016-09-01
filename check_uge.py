@@ -112,6 +112,8 @@ def seek_heavy_load(xmlfile):
             elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
                 hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
                 heavy_load[node] = hosts_lists[node]['hostvalue']
+            else:
+                pass
 
     # Passes dictionary out to writeout.py to generate HTML file.
     writeout.write_to_html('hl',heavy_load)
