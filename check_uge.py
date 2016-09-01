@@ -102,11 +102,11 @@ def seek_heavy_load(xmlfile):
 
             # If node has high load average AND high memory usage.
             if (float(np_load_avg) >= 0.80) and (mem_used_percentage >= 80.0):
-                np_load_avg = "<font style=\"color:red;\">" + np_load_avg
+                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
                 hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
             # If node has high load average ONLY.
             elif (float(np_load_avg) >= 0.80) and (mem_used_percentage < 80.0):
-                np_load_avg = "<font style=\"color:red;\">" + np_load_avg
+                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
                 heavy_load[node] = hosts_lists[node]['hostvalue']
             # If node has high memory usage ONLY.
             elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
