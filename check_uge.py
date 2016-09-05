@@ -87,33 +87,37 @@ def seek_heavy_load(xmlfile):
 
         if node not in ('global', 'admin.default.domain', 'aquilah1.default.domain', 'aquilah2.default.domain'):
             
-            # Get mem_used and mem_total. Convert it to float.
-            memory_used = float(hosts_lists[node]['hostvalue']['mem_used'].rstrip("G"))
-            memory_total = float(hosts_lists[node]['hostvalue']['mem_total'].rstrip("G"))
-
-            # Get np_load_avg(load average)
-            np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
-
-            # Calculate memory (RSS) usage percentage.
-            mem_used_percentage = (float(memory_used)/float(memory_total))*100
-            
-            # Verbose printing of memory (RSS) usage.
-            # print("{0}, {1:2.2f}%").format(node, mem_used_percentage)
-
-            # If node has high load average AND high memory usage.
-            if (float(np_load_avg) >= 0.80) and (mem_used_percentage >= 80.0):
-                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
-                hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
-            # If node has high load average ONLY.
-            elif (float(np_load_avg) >= 0.80) and (mem_used_percentage < 80.0):
-                hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
-                heavy_load[node] = hosts_lists[node]['hostvalue']
-            # If node has high memory usage ONLY.
-            elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
-                hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
-                heavy_load[node] = hosts_lists[node]['hostvalue']
-            else:
+            # Check if node is down, as marked by a dash (-) in NLOAD, MEMUS and SWAPUS. 
+            if (hosts_lists[node]['hostvalue']['mem_used']) == '-':
                 pass
+            else:
+                # Get mem_used and mem_total. Convert it to float.
+                memory_used = float(hosts_lists[node]['hostvalue']['mem_used'].rstrip("G"))
+                memory_total = float(hosts_lists[node]['hostvalue']['mem_total'].rstrip("G"))
+
+                # Get np_load_avg(load average)
+                np_load_avg = hosts_lists[node]['hostvalue']['np_load_avg']
+
+                # Calculate memory (RSS) usage percentage.
+                mem_used_percentage = (float(memory_used)/float(memory_total))*100
+                
+                # Verbose printing of memory (RSS) usage.
+                # print("{0}, {1:2.2f}%").format(node, mem_used_percentage)
+
+                # If node has high load average AND high memory usage.
+                if (float(np_load_avg) >= 0.80) and (mem_used_percentage >= 80.0):
+                    hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
+                    hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
+                # If node has high load average ONLY.
+                elif (float(np_load_avg) >= 0.80) and (mem_used_percentage < 80.0):
+                    hosts_lists[node]['hostvalue']['np_load_avg'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['np_load_avg']
+                    heavy_load[node] = hosts_lists[node]['hostvalue']
+                # If node has high memory usage ONLY.
+                elif (float(np_load_avg) < 0.80) and (mem_used_percentage >= 80.0):
+                    hosts_lists[node]['hostvalue']['mem_used'] = "<font style=\"color:red;\">" + hosts_lists[node]['hostvalue']['mem_used']
+                    heavy_load[node] = hosts_lists[node]['hostvalue']
+                else:
+                    pass
 
     # Passes dictionary out to writeout.py to generate HTML file.
     writeout.write_to_html('hl',heavy_load)
